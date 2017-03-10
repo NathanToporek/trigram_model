@@ -7,16 +7,15 @@ import java.util.LinkedList;
  */
 public class Testing {
 
-    public static int main(String ... args) {
+    public static void main(String ... args) {
         LinkedList<Integer> list = new LinkedList<Integer>();
 
         for (int i = 0; i < 100; i++) {
             list.add(i);
         }
 
-        System.out.printf("FIRS ELEMENT OF LIST: %d\n LAST ELEMENT OF LIST: %d\n\n",
+        System.out.printf("FIRST ELEMENT OF LIST: %d\nLAST ELEMENT OF LIST: %d\n\n",
                           list.getFirst(), list.getLast());
 
-        return 0;
     }
 }
