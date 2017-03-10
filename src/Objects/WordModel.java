@@ -6,7 +6,8 @@ import java.util.LinkedList;
 import java.util.Random;
 
 /**
- * Created by nate on 3/9/17.
+ * Class to handle storage of a word and all words that follow from it.
+ * @author Nathanael Toporek
  */
 public class WordModel {
 
@@ -20,6 +21,11 @@ public class WordModel {
     private Random                  myRNG;
     private LinkedList<WordModel>   myNextWords;
 
+    /**
+     * Constructs a new WordModel object containing the word passed.
+     * @param theWord the word that this WordModel will represent.
+     * @throws NullPointerException if theWord == null
+     */
     public WordModel(String theWord)
         throws NullPointerException
     {
@@ -38,6 +44,11 @@ public class WordModel {
 
         myNextWords = new LinkedList<>();
     }
+
+    /**
+     * Returns the word that this WordModel represeents.
+     * @return myWord
+     */
     public String getWord() {
         return myWord;
     }
@@ -53,6 +64,20 @@ public class WordModel {
         return myWinMax;
     }
 
+    /**
+     * Returns the maximum winning value. This is used
+     * when we select a random word in a lottery-esque fashion.
+     * @return myWinMax
+     */
+    public int getWinMax() {
+        return myWinMax;
+    }
+
+    /**
+     * Returns whether or not this word is a winner given a ticket value
+     * @param lottoTicket The ticket value for random word choice.
+     * @return (lottoTicket >= myWinMin) && (lottoTicket < myWinMax)
+     */
     public boolean isWinner(int lottoTicket) {
         return ((lottoTicket >= myWinMin) && (lottoTicket < myWinMax));
     }
@@ -60,7 +85,6 @@ public class WordModel {
     public void incrementFreq() {
         myFrequency++;
     }
-
     public void addNextTwoWords(String nextWord, String wordAfterNext)
         throws NullPointerException, IllegalStateException
     {
@@ -75,6 +99,12 @@ public class WordModel {
         // Add wordAfterNext to that Objects.WordModel.
         next.addNextWord(wordAfterNext);
     }
+
+    /**
+     * Returns a random next word in a lottery-esque fashion.
+     * @return Random word in myNextWords
+     * @throws IllegalStateException If !this.isTrained
+     */
     public String getNextWord()
         throws IllegalStateException
     {
@@ -95,6 +125,15 @@ public class WordModel {
         }
         return winningWord;
     }
+
+    /**
+     * Given the next word after this one, select the word after that.
+     * @param nextWord The word after this one.
+     * @return A random word after nextWord.
+     * @throws NullPointerException if nextWord == null
+     * @throws IllegalArgumentException if nextWord is not found
+     * @throws IllegalStateException if !this.isTrained
+     */
     public String getWordAfterNext(String nextWord)
         throws NullPointerException, IllegalArgumentException, IllegalStateException
     {
@@ -110,19 +149,27 @@ public class WordModel {
         Iterator<WordModel> itr = myNextWords.iterator();
         while(itr.hasNext() && !found) {
             WordModel wm = itr.next();
-            if(wm.getWord().compareTo(nextWord) == 0) {
+
+            System.out.printf("TARGET: %s CURRENT: %s\n", nextWord, wm.getWord());
+            if(wm.getWord().equals(nextWord)) {
                 next = wm;
                 found = true;
             }
         }
         // Throw an exception if we didn't find the word.
-        if(!found || next == null) {
+        if(!found) {
             throw new IllegalArgumentException("Word not found.");
         }
         String wordAfterNext = next.getNextWord();
         return wordAfterNext;
     }
 
+    /**
+     * Finishes the traning for this WordModel.
+     * Will recurse into each of myNextWords and finish their training as well.
+     * Sets this.isTrained = true;
+     * Assigns winning values to each word.
+     */
     public void finishTraining() {
         this.isTrained = true;
         int lowWin = 0;
@@ -154,9 +201,5 @@ public class WordModel {
             myNextWords.add(wm);
         }
         return wm;
-    }
-
-    private int getWinMax() {
-        return myWinMax;
     }
 }
